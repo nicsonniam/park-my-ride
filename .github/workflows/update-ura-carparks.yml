@@ -1,0 +1,37 @@
+name: Update URA Carparks
+
+on:
+  schedule:
+    - cron: "0 0 1 * *"  # runs monthly on the 1st at 00:00 UTC
+  workflow_dispatch:      # allows manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3. Install dependencies inside park-my-ride
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./park-my-ride
+
+      # 4. Debug: list files to verify script path
+      - name: List files for debugging
+        run: ls -R ./park-my-ride
+
+      # 5. Run the updateCarparks.js script
+      - name: Run updateUraCarparks.js
+        run: node scripts/updateUraCarparks.js
+        working-directory: ./park-my-ride
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          URA_ACCESS_KEY: ${{ secrets.URA_ACCESS_KEY }}

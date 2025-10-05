@@ -1,43 +1,95 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   Container,
   Box,
-  Button,
   TextField,
+  Button,
   Typography,
-  Modal,
+  Stack,
   CircularProgress,
+  Modal,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { searchOnemap } from "../lib/onemap";
+import { searchOnemap, OneMapResult } from "@/lib/onemap";
 
 export default function Home() {
   const [searchVal, setSearchVal] = useState("");
-  const [result, setResult] = useState(null);
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState<OneMapResult[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState<string | null>(null);
+
+  const router = useRouter();
   const theme = useTheme();
 
-  const logoSrc = theme.palette.mode === "dark" ? "/images/light-logo.png" : "/images/dark-logo.png";
+  const logoSrc =
+    theme.palette.mode === "dark"
+      ? "/images/light-logo.png"
+      : "/images/dark-logo.png";
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchVal.trim()) return;
 
     setLoading(true);
+    setModalMessage(null);
+    setResults([]);
     try {
-      const data = await searchOnemap(searchVal);
-      console.log(data);
-      
-      setResult(data);
-      setOpen(true);
+      const json = await searchOnemap(searchVal, 1);
+
+      if (json.totalNumPages > 1) {
+        setModalMessage(
+          "Too many results found. Please refine your search for a more precise location."
+        );
+      } else if (json.results && json.results.length > 0) {
+        setResults(json.results);
+      } else {
+        setModalMessage("No results found. Please try a different search.");
+      }
+
+      setModalOpen(true);
     } catch (err) {
-      console.error("API error:", err);
+      console.error("OneMap error:", err);
+      setModalMessage("Failed to fetch location. Please try again.");
+      setModalOpen(true);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setModalMessage("Geolocation not supported on this browser.");
+      setModalOpen(true);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        router.push(`/results?lat=${latitude}&lon=${longitude}&address=null`);
+      },
+      (err) => {
+        console.error("Geolocation error:", err);
+        setModalMessage("Unable to get your location.");
+        setModalOpen(true);
+      }
+    );
+  };
+
+  const handleResultClick = (r: OneMapResult) => {
+    setModalOpen(false);
+    router.push(
+      `/results?lat=${r.LATITUDE}&lon=${r.LONGITUDE}&address=${encodeURIComponent(
+        r.ADDRESS
+      )}`
+    );
   };
 
   return (
@@ -50,24 +102,28 @@ export default function Home() {
         justifyContent: "center",
         flexDirection: "column",
         textAlign: "center",
+        px: 2,
+        mt: { xs: "-80px", sm: "-80px" },
       }}
     >
       <Box sx={{ width: "100%" }}>
         <Box
           component="img"
           src={logoSrc}
-          alt="placeholder"
+          alt="Logo"
           sx={{
             display: "block",
-            margin: "0 auto 20px auto",
+            margin: "0 auto 16px auto",
             borderRadius: 2,
-            maxHeight: 200,
+            maxHeight: 160,
             width: "auto",
           }}
         />
+
         <Typography variant="h5" gutterBottom>
-          Search
+          Find Nearby Motorcycle Parking
         </Typography>
+
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -76,24 +132,50 @@ export default function Home() {
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 2,
+            gap: 1.5,
+            mt: 2,
           }}
         >
           <TextField
             label="Search"
+            placeholder="Address, keyword, or postal code"
             variant="outlined"
             fullWidth
             value={searchVal}
             onChange={(e) => setSearchVal(e.target.value)}
           />
-          <Button type="submit" variant="contained" disabled={loading}>
-            {loading ? <CircularProgress size={24} /> : "Submit"}
-          </Button>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={1}
+            sx={{ mt: 1 }}
+          >
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              fullWidth
+              sx={{ minHeight: 44 }}
+            >
+              {loading ? <CircularProgress size={20} /> : "Search"}
+            </Button>
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={handleUseCurrentLocation}
+              fullWidth
+              sx={{ minHeight: 44 }}
+            >
+              Use Current Location
+            </Button>
+          </Stack>
         </Box>
       </Box>
 
-      {/* Modal for results */}
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="search-results-modal"
+      >
         <Box
           sx={{
             position: "absolute",
@@ -102,29 +184,53 @@ export default function Home() {
             transform: "translate(-50%, -50%)",
             bgcolor: "background.paper",
             boxShadow: 24,
-            p: 4,
-            width: 400,
-            maxHeight: "80vh",
-            overflow: "auto",
+            p: 2.5,
+            width: "90%",
+            maxWidth: 360,
+            maxHeight: "70vh",
+            overflowY: "auto",
+            borderRadius: 2,
           }}
         >
-          <Typography variant="h6" gutterBottom>
-            Search Results
-          </Typography>
-          {result?.results?.length ? (
-            result.results.map((item, idx) => (
-              <Box key={idx} sx={{ mb: 2, textAlign: "left" }}>
-                <Typography variant="subtitle1">{item.SEARCHVAL}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {item.ADDRESS}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Lat: {item.LATITUDE}, Lng: {item.LONGITUDE}
-                </Typography>
+          {modalMessage ? (
+            <>
+              <Typography color="error" gutterBottom>
+                {modalMessage}
+              </Typography>
+              <Box sx={{ textAlign: "right", mt: 2 }}>
+                <Button
+                  variant="contained"
+                  onClick={() => setModalOpen(false)}
+                  size="small"
+                >
+                  Close
+                </Button>
               </Box>
-            ))
+            </>
           ) : (
-            <Typography>No results found</Typography>
+            <>
+              <Typography variant="h6" gutterBottom id="search-results-modal">
+                Select a location
+              </Typography>
+              <List>
+                {results.map((r, idx) => (
+                  <ListItem key={idx} disablePadding>
+                    <ListItemButton onClick={() => handleResultClick(r)}>
+                      <ListItemText primary={r.SEARCHVAL} secondary={r.ADDRESS} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+              <Box sx={{ textAlign: "right", mt: 2 }}>
+                <Button
+                  variant="contained"
+                  onClick={() => setModalOpen(false)}
+                  size="small"
+                >
+                  Close
+                </Button>
+              </Box>
+            </>
           )}
         </Box>
       </Modal>

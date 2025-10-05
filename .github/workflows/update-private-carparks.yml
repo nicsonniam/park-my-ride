@@ -1,0 +1,40 @@
+name: Update Private Carparks
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:      # allows manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3. Install dependencies inside park-my-ride
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./park-my-ride
+
+      # 4. Debug: list files to verify script path
+      - name: List files for debugging
+        run: ls -R ./park-my-ride
+
+      # 5. Run the updateCarparks.js script
+      - name: Run updatePrivateCarparks.js
+        run: node scripts/updatePrivateCarparks.js
+        working-directory: ./park-my-ride
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          SHEET_ID: "1pNqXJ69DaDKF9hSjV_EY0AbsMRjaD8b1tu2En7Khtqg"
+          RANGE: "Sheet1"
+
