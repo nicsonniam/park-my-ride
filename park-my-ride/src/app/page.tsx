@@ -1,7 +1,11 @@
 "use client";
 
+import OnboardingSwiper from "@/components/Onboarding/SwiperContainer";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+
 import {
   Container,
   Box,
@@ -25,9 +29,28 @@ export default function Home() {
   const [results, setResults] = useState<OneMapResult[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState<string | null>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showLanding, setShowLanding] = useState(false);
 
   const router = useRouter();
   const theme = useTheme();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hasCookie = document.cookie.includes("hasSeenWelcome=true");
+      setShowWelcome(!hasCookie);
+      setShowLanding(hasCookie);
+      document.cookie = "hasSeenWelcome=true; path=/; max-age=31536000";
+    } else {
+      setShowLanding(true);
+      setShowWelcome(false);
+    }
+  }, []);
+
+  const getStarted = () => {
+    setShowWelcome(false);
+    setShowLanding(true);
+  };
 
   const logoSrc =
     theme.palette.mode === "dark"
@@ -92,148 +115,158 @@ export default function Home() {
     );
   };
 
-  return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        textAlign: "center",
-        px: 2,
-        mt: { xs: "-80px", sm: "-80px" },
-      }}
-    >
-      <Box sx={{ width: "100%" }}>
-        <Box
-          component="img"
-          src={logoSrc}
-          alt="Logo"
-          sx={{
-            display: "block",
-            margin: "0 auto 16px auto",
-            borderRadius: 2,
-            maxHeight: 160,
-            width: "auto",
-          }}
-        />
-
-        <Typography variant="h5" gutterBottom>
-          Find Nearby Motorcycle Parking
-        </Typography>
-
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          noValidate
-          autoComplete="off"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 1.5,
-            mt: 2,
-          }}
-        >
-          <TextField
-            label="Search"
-            placeholder="Address, keyword, or postal code"
-            variant="outlined"
-            fullWidth
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-          />
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1}
-            sx={{ mt: 1 }}
-          >
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={loading}
-              fullWidth
-              sx={{ minHeight: 44 }}
-            >
-              {loading ? <CircularProgress size={20} /> : "Search"}
-            </Button>
-            <Button
-              type="button"
-              variant="outlined"
-              onClick={handleUseCurrentLocation}
-              fullWidth
-              sx={{ minHeight: 44 }}
-            >
-              Use Current Location
-            </Button>
-          </Stack>
-        </Box>
-      </Box>
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="search-results-modal"
+  if (showLanding === false && showWelcome === true) {
+    return (
+      <OnboardingSwiper getStarted={getStarted} />
+    );
+  } 
+  if (showLanding === true && showWelcome === false) {
+    return (
+      <Container
+        maxWidth="sm"
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          textAlign: "center",
+          px: 2,
+          mt: { xs: "-80px", sm: "-80px" },
+        }}
       >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 2.5,
-            width: "90%",
-            maxWidth: 360,
-            maxHeight: "70vh",
-            overflowY: "auto",
-            borderRadius: 2,
-          }}
-        >
-          {modalMessage ? (
-            <>
-              <Typography color="error" gutterBottom>
-                {modalMessage}
-              </Typography>
-              <Box sx={{ textAlign: "right", mt: 2 }}>
-                <Button
-                  variant="contained"
-                  onClick={() => setModalOpen(false)}
-                  size="small"
-                >
-                  Close
-                </Button>
-              </Box>
-            </>
-          ) : (
-            <>
-              <Typography variant="h6" gutterBottom id="search-results-modal">
-                Select a location
-              </Typography>
-              <List>
-                {results.map((r, idx) => (
-                  <ListItem key={idx} disablePadding>
-                    <ListItemButton onClick={() => handleResultClick(r)}>
-                      <ListItemText primary={r.SEARCHVAL} secondary={r.ADDRESS} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-              <Box sx={{ textAlign: "right", mt: 2 }}>
-                <Button
-                  variant="contained"
-                  onClick={() => setModalOpen(false)}
-                  size="small"
-                >
-                  Close
-                </Button>
-              </Box>
-            </>
-          )}
+        <Box sx={{ width: "100%" }}>
+          <Box
+            component="img"
+            src={logoSrc}
+            alt="Logo"
+            sx={{
+              display: "block",
+              margin: "0 auto 16px auto",
+              borderRadius: 2,
+              maxHeight: 160,
+              width: "auto",
+            }}
+          />
+
+          <Typography variant="h5" gutterBottom>
+            Find Nearby Motorcycle Parking
+          </Typography>
+
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            autoComplete="off"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1.5,
+              mt: 2,
+            }}
+          >
+            <TextField
+              label="Search"
+              placeholder="Address, keyword, or postal code"
+              variant="outlined"
+              fullWidth
+              value={searchVal}
+              onChange={(e) => setSearchVal(e.target.value)}
+            />
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1}
+              sx={{ mt: 1 }}
+            >
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={loading}
+                fullWidth
+                sx={{ minHeight: 44 }}
+              >
+                {loading ? <CircularProgress size={20} /> : "Search"}
+              </Button>
+              <Button
+                type="button"
+                variant="outlined"
+                onClick={handleUseCurrentLocation}
+                fullWidth
+                sx={{ minHeight: 44 }}
+              >
+                Use Current Location
+              </Button>
+            </Stack>
+          </Box>
         </Box>
-      </Modal>
-    </Container>
-  );
+
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          aria-labelledby="search-results-modal"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 2.5,
+              width: "90%",
+              maxWidth: 360,
+              maxHeight: "70vh",
+              overflowY: "auto",
+              borderRadius: 2,
+            }}
+          >
+            {modalMessage ? (
+              <>
+                <Typography color="error" gutterBottom>
+                  {modalMessage}
+                </Typography>
+                <Box sx={{ textAlign: "right", mt: 2 }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => setModalOpen(false)}
+                    size="small"
+                  >
+                    Close
+                  </Button>
+                </Box>
+              </>
+            ) : (
+              <>
+                <Typography variant="h6" gutterBottom id="search-results-modal">
+                  Select a location
+                </Typography>
+                <List>
+                  {results.map((r, idx) => (
+                    <ListItem key={idx} disablePadding>
+                      <ListItemButton onClick={() => handleResultClick(r)}>
+                        <ListItemText
+                          primary={r.SEARCHVAL}
+                          secondary={r.ADDRESS}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+                <Box sx={{ textAlign: "right", mt: 2 }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => setModalOpen(false)}
+                    size="small"
+                  >
+                    Close
+                  </Button>
+                </Box>
+              </>
+            )}
+          </Box>
+        </Modal>
+      </Container>
+    );
+  }
 }
