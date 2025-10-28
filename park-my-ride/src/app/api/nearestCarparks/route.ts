@@ -30,17 +30,22 @@ interface PrivateCarpark {
   isNoParking?: boolean;
 }
 
+const COLLECTION_NAME = "carparkList";
 const HDB_DB_NAME = "hdbCarparkData";
-const HDB_COLLECTION = "carparkList";
-
 const URA_DB_NAME = "uraCarparkData";
-const URA_COLLECTION = "carparkList";
-
 const PRIVATE_DB_NAME = "privateCarparkData";
-const PRIVATE_COLLECTION = "carparkList";
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
 
 export async function POST(req: Request) {
   try {
+    const origin = req.headers.get('origin');
+    if (!origin || !allowedOrigins.includes(origin)) {
+      return new Response(
+        JSON.stringify({ error: "Forbidden" }),
+        { status: 403 }
+      );
+    }
     const body = await req.json();
     const { latitude, longitude, radius } = body;
 
@@ -61,7 +66,7 @@ export async function POST(req: Request) {
     try {
       hdbCarparks = await client
         .db(HDB_DB_NAME)
-        .collection(HDB_COLLECTION)
+        .collection(COLLECTION_NAME)
         .aggregate<HDBCarpark>([
           { $geoNear: { near: { type: "Point", coordinates: [lon, lat] }, distanceField: "distance", spherical: true, maxDistance } },
           { $limit: 10 },
@@ -75,7 +80,7 @@ export async function POST(req: Request) {
     try {
       uraCarparks = await client
         .db(URA_DB_NAME)
-        .collection(URA_COLLECTION)
+        .collection(COLLECTION_NAME)
         .aggregate<URACarpark>([
           { $geoNear: { near: { type: "Point", coordinates: [lon, lat] }, distanceField: "distance", spherical: true, maxDistance } },
           { $match: { vehCat: "Motorcycle", parkCapacity: { $gt: 0 } } },
@@ -90,7 +95,7 @@ export async function POST(req: Request) {
     try {
       privateCarparks = await client
         .db(PRIVATE_DB_NAME)
-        .collection(PRIVATE_COLLECTION)
+        .collection(COLLECTION_NAME)
         .aggregate<PrivateCarpark>([
           { $geoNear: { near: { type: "Point", coordinates: [lon, lat] }, distanceField: "distance", spherical: true, maxDistance } },
           { $limit: 50 },
