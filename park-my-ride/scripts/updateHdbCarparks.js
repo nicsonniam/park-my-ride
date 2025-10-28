@@ -51,13 +51,13 @@ async function updateHdbCarparks() {
   await collection.insertMany(transformed);
   await collection.createIndex({ location: "2dsphere" });
 
-  console.log("✅ Carpark data updated at", new Date());
+  console.log("Carpark data updated at", new Date());
   await client.close();
 }
 
 if (require.main === module) {
   updateHdbCarparks().catch((err) => {
-    console.error("❌ Error updating carparks:", err);
+    console.error("Error updating carparks:", err);
     process.exit(1);
   });
 }

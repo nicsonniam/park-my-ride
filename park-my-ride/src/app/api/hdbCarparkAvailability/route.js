@@ -18,10 +18,8 @@ export async function POST(req) {
     const db = client.db(DB_NAME);
     const collection = db.collection(COLLECTION_NAME);
 
-    // Fetch all entries for this carpark_number
     const results = await collection.find({ carpark_number }).toArray();
 
-    // Extract only motorcycle lots (lot_type "Y") and include last_updated
     const motorcycleLots = results
       .flatMap(entry =>
         entry.carpark_info
@@ -35,7 +33,7 @@ export async function POST(req) {
 
     return new Response(JSON.stringify({ motorcycleLots }), { status: 200 });
   } catch (err) {
-    console.error("❌ Error fetching availability:", err);
+    console.error("Error fetching availability:", err);
     return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
   }
 }
