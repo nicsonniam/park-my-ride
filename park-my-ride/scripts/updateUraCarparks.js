@@ -20,7 +20,6 @@ function svy21ToWgs84(x, y) {
 
 async function updateUraCarparks() {
   try {
-    // Step 1: Get daily token
     const tokenResp = await fetch(
       "https://eservice.ura.gov.sg/uraDataService/insertNewToken/v1",
       {
@@ -34,7 +33,6 @@ async function updateUraCarparks() {
 
     if (!token) throw new Error("Failed to get URA token");
 
-    // Step 2: Fetch carpark data
     const dataResp = await fetch(
       "https://eservice.ura.gov.sg/uraDataService/invokeUraDS/v1?service=Car_Park_Details",
       {
@@ -52,7 +50,6 @@ async function updateUraCarparks() {
       return;
     }
 
-    // Step 3: Transform coordinates
     const transformed = results.map((item) => {
       let geojson = null;
 
@@ -61,17 +58,16 @@ async function updateUraCarparks() {
         const { lon, lat } = svy21ToWgs84(x, y);
         geojson = {
           type: "Point",
-          coordinates: [lon, lat], // GeoJSON requires [lon, lat]
+          coordinates: [lon, lat],
         };
       }
 
       return {
         ...item,
-        geojson, // single GeoJSON point
+        geojson,
       };
     });
 
-    // Step 4: Update MongoDB
     const client = new MongoClient(MONGODB_URI);
     await client.connect();
     const collection = client.db(DB_NAME).collection(COLLECTION_NAME);
@@ -79,15 +75,13 @@ async function updateUraCarparks() {
     await collection.deleteMany({});
     await collection.insertMany(transformed);
 
-    // Ensure index exists
     await collection.createIndex({ geojson: "2dsphere" });
 
-    console.log("✅ URA carparks updated successfully with GeoJSON coordinates!");
+    console.log("URA carparks updated successfully with GeoJSON coordinates!");
     await client.close();
   } catch (err) {
-    console.error("❌ Error updating URA carparks:", err);
+    console.error("Error updating URA carparks:", err);
   }
 }
 
-// Run script
 updateUraCarparks();

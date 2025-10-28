@@ -4,6 +4,9 @@ import "./globals.css";
 import VersionNotice from "@/components/Common/VersionNotice";
 import { Box } from "@mui/material";
 import TopNav from "@/components/Common/TopNav";
+import 'swiper/css';
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

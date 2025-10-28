@@ -73,17 +73,17 @@ async function syncSheetsToMongo() {
     // --- Create 2dsphere index on location ---
     await collection.createIndex({ location: "2dsphere" });
 
-    console.log(`✅ Inserted ${documents.length} records into MongoDB with 2dsphere index.`);
+    console.log(`Inserted ${documents.length} records into MongoDB with 2dsphere index.`);
     await client.close();
   } catch (error) {
-    console.error("❌ Error syncing Sheets to MongoDB:", error);
+    console.error("Error syncing Sheets to MongoDB:", error);
   }
 }
 
 // Run immediately if this file is executed directly
 if (require.main === module) {
   syncSheetsToMongo().catch(err => {
-    console.error("❌ Error running sync:", err);
+    console.error("Error running sync:", err);
     process.exit(1);
   });
 }
