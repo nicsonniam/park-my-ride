@@ -35,25 +35,20 @@ const HDB_DB_NAME = "hdbCarparkData";
 const URA_DB_NAME = "uraCarparkData";
 const PRIVATE_DB_NAME = "privateCarparkData";
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [];
 
 export async function POST(req: Request) {
   try {
-    const origin = req.headers.get('origin');
+    const origin = req.headers.get("origin");
     if (!origin || !allowedOrigins.includes(origin)) {
-      return new Response(
-        JSON.stringify({ error: "Forbidden" }),
-        { status: 403 }
-      );
+      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
     }
+
     const body = await req.json();
     const { latitude, longitude, radius } = body;
 
     if (!latitude || !longitude) {
-      return new Response(
-        JSON.stringify({ error: "latitude and longitude are required" }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ error: "latitude and longitude are required" }), { status: 400 });
     }
 
     const lat = parseFloat(latitude);
@@ -69,7 +64,7 @@ export async function POST(req: Request) {
         .collection(COLLECTION_NAME)
         .aggregate<HDBCarpark>([
           { $geoNear: { near: { type: "Point", coordinates: [lon, lat] }, distanceField: "distance", spherical: true, maxDistance } },
-          { $limit: 10 },
+          { $limit: 10 }
         ])
         .toArray();
     } catch (err) {
@@ -84,9 +79,18 @@ export async function POST(req: Request) {
         .aggregate<URACarpark>([
           { $geoNear: { near: { type: "Point", coordinates: [lon, lat] }, distanceField: "distance", spherical: true, maxDistance } },
           { $match: { vehCat: "Motorcycle", parkCapacity: { $gt: 0 } } },
-          { $limit: 10 },
+          { $limit: 50 }
         ])
         .toArray();
+
+      const seen = new Set<string>();
+      uraCarparks = uraCarparks.filter((cp) => {
+        if (seen.has(cp.ppCode)) return false;
+        seen.add(cp.ppCode);
+        return true;
+      });
+
+      uraCarparks = uraCarparks.slice(0, 10);
     } catch (err) {
       console.error(err);
     }
@@ -98,14 +102,14 @@ export async function POST(req: Request) {
         .collection(COLLECTION_NAME)
         .aggregate<PrivateCarpark>([
           { $geoNear: { near: { type: "Point", coordinates: [lon, lat] }, distanceField: "distance", spherical: true, maxDistance } },
-          { $limit: 50 },
+          { $limit: 50 }
         ])
         .toArray();
 
       privateCarparks = privateCarparks
         .map((cp) => ({
           ...cp,
-          isNoParking: !cp.rates || cp.rates.toLowerCase() === "no motorcycle parking",
+          isNoParking: !cp.rates || cp.rates.toLowerCase() === "no motorcycle parking"
         }))
         .sort((a, b) => {
           if (a.isNoParking && !b.isNoParking) return 1;
@@ -116,15 +120,9 @@ export async function POST(req: Request) {
       console.error(err);
     }
 
-    return new Response(
-      JSON.stringify({ hdbCarparks, uraCarparks, privateCarparks }),
-      { status: 200 }
-    );
+    return new Response(JSON.stringify({ hdbCarparks, uraCarparks, privateCarparks }), { status: 200 });
   } catch (err) {
     console.error(err);
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
   }
 }

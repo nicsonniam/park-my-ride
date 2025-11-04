@@ -10,13 +10,14 @@ import {
   Select,
   CircularProgress,
   Stack,
-  Box,
   Card,
   CardContent,
   Button,
   Tooltip,
+  Drawer,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import DirectionsRounded from "@mui/icons-material/DirectionsRounded";
 
 interface HDBCarpark {
   _id: string;
@@ -44,6 +45,8 @@ interface PrivateCarpark {
   distance: number;
   isNoParking: boolean;
   verified: boolean;
+  latitude?: number;
+  longitude?: number;
 }
 
 export default function ResultsPage() {
@@ -60,6 +63,9 @@ export default function ResultsPage() {
   const [uraCarparks, setUraCarparks] = useState<URACarpark[]>([]);
   const [privateCarparks, setPrivateCarparks] = useState<PrivateCarpark[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const [selectedCarpark, setSelectedCarpark] = useState<any | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const fetchCarparks = async (lat: string, lon: string, radius: number) => {
     setLoading(true);
@@ -84,6 +90,8 @@ export default function ResultsPage() {
             distance: cp.distance,
             isNoParking: cp.isNoParking || false,
             verified: cp.verified ?? false,
+            latitude: cp.latitude,
+            longitude: cp.longitude,
           }))
           .sort((a, b) => Number(a.isNoParking) - Number(b.isNoParking))
       );
@@ -110,98 +118,61 @@ export default function ResultsPage() {
     );
   }
 
-  const renderCard = (cp: any, type: "HDB" | "URA" | "Private") => {
-    if (type === "HDB") {
-      return (
-        <Card
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            borderWidth: 3,
-            borderStyle: "solid",
-            borderColor: "gray",
-            borderRadius: 2,
-            p: 1,
-            width: "100%",
-          }}
-        >
-          <CardContent sx={{ p: 1, flexGrow: 1 }}>
-            <Typography variant="h5" noWrap>
-              {cp.car_park_no} - {cp.address}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap>
-              Type: {cp.car_park_type} | Parking: {cp.type_of_parking_system}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Distance: {Math.round(cp.distance)} m
-            </Typography>
-          </CardContent>
-        </Card>
-      );
-    } else if (type === "URA") {
-      return (
-        <Card
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            borderWidth: 3,
-            borderStyle: "solid",
-            borderColor: "gray",
-            borderRadius: 2,
-            p: 1,
-            width: "100%",
-          }}
-        >
-          <CardContent sx={{ p: 1, flexGrow: 1 }}>
-            <Typography variant="h5" noWrap>
-              {cp.ppCode} - {cp.ppName}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap>
-              Capacity: {cp.parkCapacity} | Category: {cp.vehCat}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Distance: {Math.round(cp.distance)} m
-            </Typography>
-          </CardContent>
-        </Card>
-      );
-    } else {
-      return (
-        <Card
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            backgroundColor: cp.isNoParking ? "lightgray" : "inherit",
-            borderWidth: 3,
-            borderStyle: "solid",
-            borderColor: cp.isNoParking ? "lightgray" : "gray",
-            borderRadius: 2,
-            p: 1,
-            width: "100%",
-          }}
-        >
-          <CardContent sx={{ p: 1, flexGrow: 1 }}>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Typography
-                variant="h5"
-                sx={{ color: cp.isNoParking ? "gray" : "inherit" }}
-                noWrap
-              >
-                {cp.location_name}
-              </Typography>
-              <Tooltip title={cp.verified ? "Verified" : "Not Verified"} arrow>
-                <CheckCircleIcon
+  const openNavigation = (cp: any) => {
+    setSelectedCarpark(cp);
+    setDrawerOpen(true);
+  };
+
+  const renderCard = (cp: any, type: "HDB" | "URA" | "Private") => (
+    <Card key={cp._id} sx={{ mb: 2 }}>
+      <CardContent>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Typography
+            variant="h5"
+            className={`${cp.isNoParking ? "" : "underline"}`}
+            sx={{ cursor: cp.isNoParking ? "default" : "pointer" }}
+            onClick={() => cp.isNoParking && type === "Private" ? null : openNavigation(cp)}
+            noWrap
+          >
+            {
+              !cp.isNoParking ? (
+                <DirectionsRounded
                   fontSize="small"
-                  sx={{ color: cp.verified ? "green" : "gray" }}
+                  className="mr-1"
+                  sx={{ color: "black" }}
                 />
-              </Tooltip>
-            </Stack>
+              ) : <></>
+            }
+            {type === "HDB"
+              ? `${cp.car_park_no} - ${cp.address}`
+              : type === "URA"
+              ? `${cp.ppCode} - ${cp.ppName}`
+              : cp.location_name}
+          </Typography>
+          {type === "Private" && (
+            <Tooltip title={cp.verified ? "Verified" : "Not Verified"} arrow>
+              <CheckCircleIcon
+                fontSize="small"
+                sx={{ color: cp.verified ? "green" : "gray" }}
+              />
+            </Tooltip>
+          )}
+        </Stack>
+
+        {type === "HDB" && (
+          <Typography variant="body2" color="text.secondary" noWrap>
+            Type: {cp.car_park_type} | Parking: {cp.type_of_parking_system}
+          </Typography>
+        )}
+
+        {type === "URA" && (
+          <Typography variant="body2" color="text.secondary" noWrap>
+            Capacity: {cp.parkCapacity} | Category: {cp.vehCat}
+          </Typography>
+        )}
+
+        {type === "Private" && (
+          <>
             <Typography
               variant="body2"
               sx={{ color: cp.isNoParking ? "gray" : "inherit" }}
@@ -221,40 +192,14 @@ export default function ResultsPage() {
                 Rates: {cp.rates.replace(/\\n/g, "\n")}
               </Typography>
             )}
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ color: cp.isNoParking ? "gray" : "inherit" }}
-            >
-              Distance: {Math.round(cp.distance)} m
-            </Typography>
-          </CardContent>
-        </Card>
-      );
-    }
-  };
+          </>
+        )}
 
-  const renderCarparkGrid = (carparks: any[], type: "HDB" | "URA" | "Private") => (
-    <Box
-      sx={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 2,
-        justifyContent: "flex-start",
-      }}
-    >
-      {carparks.map((cp) => (
-        <Box
-          key={cp._id}
-          sx={{
-            flex: { xs: "1 1 100%", md: "1 1 calc(50% - 16px)" },
-            minWidth: 0,
-          }}
-        >
-          {renderCard(cp, type)}
-        </Box>
-      ))}
-    </Box>
+        <Typography variant="body2" color="text.secondary">
+          Distance: {Math.round(cp.distance)} m
+        </Typography>
+      </CardContent>
+    </Card>
   );
 
   return (
@@ -293,7 +238,11 @@ export default function ResultsPage() {
       <Typography
         variant="subtitle1"
         fontWeight="bold"
-        sx={{ whiteSpace: "pre-line", mb: 2, textAlign: { xs: "center", sm: "left" } }}
+        sx={{
+          whiteSpace: "pre-line",
+          mb: 2,
+          textAlign: { xs: "center", sm: "left" },
+        }}
       >
         {address
           ? `Selected Address: ${address}`
@@ -312,25 +261,97 @@ export default function ResultsPage() {
             HDB Motorcycle Parking
           </Typography>
           {hdbCarparks.length
-            ? renderCarparkGrid(hdbCarparks, "HDB")
+            ? hdbCarparks.map((cp) => renderCard(cp, "HDB"))
             : <Typography>No nearby HDB motorcycle parking</Typography>}
 
           <Typography variant="h6" sx={{ mt: 4, mb: 1 }}>
             URA Motorcycle Parking
           </Typography>
           {uraCarparks.length
-            ? renderCarparkGrid(uraCarparks, "URA")
+            ? uraCarparks.map((cp) => renderCard(cp, "URA"))
             : <Typography>No nearby URA motorcycle parking</Typography>}
 
           <Typography variant="h6" sx={{ mt: 4, mb: 1 }}>
             Other Motorcycle Parking
           </Typography>
           {privateCarparks.length
-            ? renderCarparkGrid(privateCarparks, "Private")
+            ? privateCarparks.map((cp) => renderCard(cp, "Private"))
             : <Typography>No nearby private motorcycle parking</Typography>}
         </>
       )}
+
+      {/* Bottom drawer for mobile */}
+      <Drawer
+        anchor="bottom"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        PaperProps={{ sx: { borderTopLeftRadius: 16, borderTopRightRadius: 16, p: 2 } }}
+      >
+        {selectedCarpark && (
+          <>
+            <Typography variant="h6" gutterBottom>
+              {selectedCarpark.location_name ||
+                selectedCarpark.ppName ||
+                selectedCarpark.car_park_no}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              {selectedCarpark.address || selectedCarpark.car_park_type || ""}
+            </Typography>
+            <div className="flex gap-8">
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => {
+                  let lat = 0;
+                  let lon = 0;
+                  if (selectedCarpark.latitude && selectedCarpark.longitude) {
+                    lat = selectedCarpark.latitude;
+                    lon = selectedCarpark.longitude;
+                  } else if (selectedCarpark.location?.coordinates && selectedCarpark.location?.coordinates.length === 2) {
+                    lat = selectedCarpark.location.coordinates[1];
+                    lon = selectedCarpark.location.coordinates[0];
+                  } else if (selectedCarpark.geojson?.coordinates && selectedCarpark.geojson?.coordinates.length === 2) {
+                    lat = selectedCarpark.geojson.coordinates[1];
+                    lon = selectedCarpark.geojson.coordinates[0];
+                  }
+                  if (lat === 0 && lon === 0) return;
+                  window.open(
+                    `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`,
+                    "_blank"
+                  );
+                }}
+              >
+                Google Maps
+              </Button>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => {
+                  let lat = 0;
+                  let lon = 0;
+                  if (selectedCarpark.latitude && selectedCarpark.longitude) {
+                    lat = selectedCarpark.latitude;
+                    lon = selectedCarpark.longitude;
+                  } else if (selectedCarpark.location?.coordinates && selectedCarpark.location?.coordinates.length === 2) {
+                    lat = selectedCarpark.location.coordinates[1];
+                    lon = selectedCarpark.location.coordinates[0];
+                  } else if (selectedCarpark.geojson?.coordinates && selectedCarpark.geojson?.coordinates.length === 2) {
+                    lat = selectedCarpark.geojson.coordinates[1];
+                    lon = selectedCarpark.geojson.coordinates[0];
+                  }
+                  if (lat === 0 && lon === 0) return;
+                  window.open(
+                    `https://waze.com/ul?ll=${lat},${lon}&navigate=yes`,
+                    "_blank"
+                  );
+                }}
+              >
+                Waze
+              </Button>
+            </div>
+          </>
+        )}
+      </Drawer>
     </Container>
   );
 }
-
