@@ -31,7 +31,7 @@ export default function VersionNotice() {
       }}
     >
       <Typography variant="caption" sx={{ flexGrow: 1 }}>
-        ⚠️ Alpha version 1.0.0 – data is still being collected; bugs or missing info may be present.
+        ⚠️ Alpha version 1.0.2 – data is still being collected; bugs or missing info may be present.
       </Typography>
       <IconButton
         size="small"
