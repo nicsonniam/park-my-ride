@@ -3,8 +3,6 @@
 import OnboardingSwiper from "@/components/Onboarding/SwiperContainer";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 
 import {
   Container,
@@ -31,6 +29,7 @@ export default function Home() {
   const [modalMessage, setModalMessage] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
+  const [resultsPageLength, setResultsPageLength] = useState(1);
 
   const router = useRouter();
   const theme = useTheme();
@@ -57,7 +56,10 @@ export default function Home() {
       ? "/images/light-logo.png"
       : "/images/dark-logo.png";
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+      e: React.FormEvent,
+      pageNum: number = 1
+    ) => {
     e.preventDefault();
     if (!searchVal.trim()) return;
 
@@ -65,14 +67,11 @@ export default function Home() {
     setModalMessage(null);
     setResults([]);
     try {
-      const json = await searchOnemap(searchVal, 1);
+      const json = await searchOnemap(searchVal, pageNum);
 
-      if (json.totalNumPages > 1) {
-        setModalMessage(
-          "Too many results found. Please refine your search for a more precise location."
-        );
-      } else if (json.results && json.results.length > 0) {
+      if (json.results && json.results.length > 0) {
         setResults(json.results);
+        setResultsPageLength(json.totalNumPages || 1);
       } else {
         setModalMessage("No results found. Please try a different search.");
       }
@@ -253,6 +252,11 @@ export default function Home() {
                     </ListItem>
                   ))}
                 </List>
+                {resultsPageLength > 1 && (
+                  <Typography color="error" gutterBottom>
+                    Note: Only the first page of results is shown. Please refine your search for more specific results.
+                  </Typography>
+                )}
                 <Box sx={{ textAlign: "right", mt: 2 }}>
                   <Button
                     variant="contained"
