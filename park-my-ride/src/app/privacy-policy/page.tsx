@@ -1,7 +1,7 @@
 import { Container, Typography, Box } from "@mui/material";
 
 export const metadata = {
-  title: "Privacy Policy - Park My Ride",
+  title: "Privacy Policy - Park My Ride SG",
 };
 
 export default function PrivacyPolicyPage() {
@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
       </Typography>
 
       <Typography variant="body1" paragraph>
-        At <strong>Park My Ride</strong>, your privacy matters to us. This Privacy Policy outlines how we handle information while you use our service.
+        At <strong>Park My Ride SG</strong>, your privacy matters to us. This Privacy Policy outlines how we handle information while you use our service.
       </Typography>
 
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
         3. Third-Party Data Sources
       </Typography>
       <Typography variant="body1" paragraph>
-        The parking data displayed within Park My Ride originates from publicly available HDB and URA datasets, as well as community-contributed information. We do not control or influence how these third parties manage their data or APIs.
+        The parking data displayed within Park My Ride SG originates from publicly available HDB and URA datasets, as well as community-contributed information. We do not control or influence how these third parties manage their data or APIs.
       </Typography>
 
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>

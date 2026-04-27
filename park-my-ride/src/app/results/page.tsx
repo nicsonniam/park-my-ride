@@ -1,4 +1,6 @@
 // app/results/page.tsx
+"use client"
+
 import { Suspense } from "react";
 import ResultsPage from "./ResultsPage";
 import { Box, CircularProgress } from "@mui/material";
