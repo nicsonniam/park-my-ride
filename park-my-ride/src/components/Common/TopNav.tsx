@@ -44,7 +44,7 @@ export default function TopNav() {
             sx={{ fontWeight: 600, cursor: "pointer" }}
             onClick={() => router.push("/")}
           >
-            Park My Ride
+            Park My Ride SG
           </Typography>
 
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>

@@ -7,6 +7,7 @@ import TopNav from "@/components/Common/TopNav";
 import 'swiper/css';
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "leaflet/dist/leaflet.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Park My Ride",
-  description: "Park My Ride - Find Motorcycle Parking in Singapore",
+  title: "Park My Ride SG",
+  description: "Park My Ride SG - Singapore's First dedicated motorcycle parking app",
 };
 
 export default function RootLayout({
@@ -35,7 +36,7 @@ export default function RootLayout({
       >
         <TopNav />
         <Box sx={{ mt: 10 }}>{children}</Box>
-        <VersionNotice />
+        {/* <VersionNotice /> */}
       </body>
     </html>
   );

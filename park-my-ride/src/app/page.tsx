@@ -1,24 +1,15 @@
 "use client";
 
 import OnboardingSwiper from "@/components/Onboarding/SwiperContainer";
+import LocationSearch from "@/components/LocationSearch/LocationSearch";
+import ResultsModal from "@/components/LocationSearch/ResultsModal";
+
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-import {
-  Container,
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Stack,
-  CircularProgress,
-  Modal,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
+import { Container, Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+
 import { searchOnemap, OneMapResult } from "@/lib/onemap";
 
 export default function Home() {
@@ -56,20 +47,18 @@ export default function Home() {
       ? "/images/light-logo.png"
       : "/images/dark-logo.png";
 
-  const handleSubmit = async (
-      e: React.FormEvent,
-      pageNum: number = 1
-    ) => {
+  const handleSubmit = async (e: React.FormEvent, pageNum: number = 1) => {
     e.preventDefault();
     if (!searchVal.trim()) return;
 
     setLoading(true);
     setModalMessage(null);
     setResults([]);
+
     try {
       const json = await searchOnemap(searchVal, pageNum);
 
-      if (json.results && json.results.length > 0) {
+      if (json.results?.length > 0) {
         setResults(json.results);
         setResultsPageLength(json.totalNumPages || 1);
       } else {
@@ -92,6 +81,7 @@ export default function Home() {
       setModalOpen(true);
       return;
     }
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
@@ -101,7 +91,7 @@ export default function Home() {
         console.error("Geolocation error:", err);
         setModalMessage("Unable to get your location.");
         setModalOpen(true);
-      }
+      },
     );
   };
 
@@ -109,16 +99,15 @@ export default function Home() {
     setModalOpen(false);
     router.push(
       `/results?lat=${r.LATITUDE}&lon=${r.LONGITUDE}&address=${encodeURIComponent(
-        r.ADDRESS
-      )}`
+        r.ADDRESS,
+      )}`,
     );
   };
 
   if (showLanding === false && showWelcome === true) {
-    return (
-      <OnboardingSwiper getStarted={getStarted} />
-    );
-  } 
+    return <OnboardingSwiper getStarted={getStarted} />;
+  }
+
   if (showLanding === true && showWelcome === false) {
     return (
       <Container
@@ -152,125 +141,26 @@ export default function Home() {
             Find Nearby Motorcycle Parking
           </Typography>
 
-          <Box
-            component="form"
+          <LocationSearch
+            searchVal={searchVal}
+            setSearchVal={setSearchVal}
+            loading={loading}
             onSubmit={handleSubmit}
-            noValidate
-            autoComplete="off"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 1.5,
-              mt: 2,
-            }}
-          >
-            <TextField
-              label="Search"
-              placeholder="Address, keyword, or postal code"
-              variant="outlined"
-              fullWidth
-              value={searchVal}
-              onChange={(e) => setSearchVal(e.target.value)}
-            />
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={1}
-              sx={{ mt: 1 }}
-            >
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={loading}
-                fullWidth
-                sx={{ minHeight: 44 }}
-              >
-                {loading ? <CircularProgress size={20} /> : "Search"}
-              </Button>
-              <Button
-                type="button"
-                variant="outlined"
-                onClick={handleUseCurrentLocation}
-                fullWidth
-                sx={{ minHeight: 44 }}
-              >
-                Use Current Location
-              </Button>
-            </Stack>
-          </Box>
+            onUseCurrentLocation={handleUseCurrentLocation}
+          />
         </Box>
 
-        <Modal
+        <ResultsModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
-          aria-labelledby="search-results-modal"
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              p: 2.5,
-              width: "90%",
-              maxWidth: 360,
-              maxHeight: "70vh",
-              overflowY: "auto",
-              borderRadius: 2,
-            }}
-          >
-            {modalMessage ? (
-              <>
-                <Typography color="error" gutterBottom>
-                  {modalMessage}
-                </Typography>
-                <Box sx={{ textAlign: "right", mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => setModalOpen(false)}
-                    size="small"
-                  >
-                    Close
-                  </Button>
-                </Box>
-              </>
-            ) : (
-              <>
-                <Typography variant="h6" gutterBottom id="search-results-modal">
-                  Select a location
-                </Typography>
-                <List>
-                  {results.map((r, idx) => (
-                    <ListItem key={idx} disablePadding>
-                      <ListItemButton onClick={() => handleResultClick(r)}>
-                        <ListItemText
-                          primary={r.SEARCHVAL}
-                          secondary={r.ADDRESS}
-                        />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-                {resultsPageLength > 1 && (
-                  <Typography color="error" gutterBottom>
-                    Note: Only the first page of results is shown. Please refine your search for more specific results.
-                  </Typography>
-                )}
-                <Box sx={{ textAlign: "right", mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => setModalOpen(false)}
-                    size="small"
-                  >
-                    Close
-                  </Button>
-                </Box>
-              </>
-            )}
-          </Box>
-        </Modal>
+          results={results}
+          message={modalMessage}
+          resultsPageLength={resultsPageLength}
+          onSelect={handleResultClick}
+        />
       </Container>
     );
   }
+
+  return null;
 }

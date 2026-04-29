@@ -1,14 +1,14 @@
 import { Container, Typography } from "@mui/material";
 
 export const metadata = {
-  title: "About - Park My Ride",
+  title: "About - Park My Ride SG",
 };
 
 export default function AboutPage() {
   return (
     <Container sx={{ mt: 4, mb: 8 }}>
       <Typography variant="h4" sx={{ mb: 2 }}>
-        Welcome to Park My Ride
+        Welcome to Park My Ride SG
       </Typography>
 
       <Typography variant="body1" paragraph>
@@ -16,7 +16,7 @@ export default function AboutPage() {
       </Typography>
 
       <Typography variant="body1" paragraph>
-        Park My Ride solves this by pulling publicly available HDB and URA carpark data and recommending the nearest motorcycle parking spots based on your geolocation.
+        Park My Ride SG solves this by pulling publicly available HDB and URA carpark data and recommending the nearest motorcycle parking spots based on your geolocation.
       </Typography>
 
       <Typography variant="body1" paragraph>

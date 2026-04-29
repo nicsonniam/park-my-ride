@@ -12,14 +12,14 @@ export default function TermsPage() {
       </Typography>
 
       <Typography variant="body1" paragraph>
-        Welcome to <strong>Park My Ride</strong>. By accessing or using our platform, you agree to the following Terms & Conditions. Please read them carefully before using the service.
+        Welcome to <strong>Park My Ride SG</strong>. By accessing or using our platform, you agree to the following Terms & Conditions. Please read them carefully before using the service.
       </Typography>
 
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
         1. General Information
       </Typography>
       <Typography variant="body1" paragraph>
-        Park My Ride provides information about motorcycle parking locations across Singapore. The data displayed on this site is sourced from publicly available HDB and URA datasets, as well as community-contributed or crowdsourced sources. While we make every effort to ensure accuracy, the information provided may not always reflect the most current conditions.
+        Park My Ride SG provides information about motorcycle parking locations across Singapore. The data displayed on this site is sourced from publicly available HDB and URA datasets, as well as community-contributed or crowdsourced sources. While we make every effort to ensure accuracy, the information provided may not always reflect the most current conditions.
       </Typography>
 
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
@@ -29,14 +29,14 @@ export default function TermsPage() {
         We do not guarantee the accuracy, completeness, or reliability of any parking information presented. Users are strongly encouraged to verify all parking details on-site or through official channels before parking.
       </Typography>
       <Typography variant="body1" paragraph>
-        Park My Ride shall not be held responsible for any inconvenience, fines, or loss arising from inaccurate data, misinterpretation of parking rules, or situations where riders get lost or park incorrectly due to the information provided on the site.
+        Park My Ride SG shall not be held responsible for any inconvenience, fines, or loss arising from inaccurate data, misinterpretation of parking rules, or situations where riders get lost or park incorrectly due to the information provided on the site.
       </Typography>
 
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
         3. Crowdsourced Information
       </Typography>
       <Typography variant="body1" paragraph>
-        Some data, such as private or lesser-known parking spots, are submitted by users and community members. Such information is provided on a best-effort basis and may not be verified. Park My Ride reserves the right to remove, edit, or reject submitted information at its discretion.
+        Some data, such as private or lesser-known parking spots, are submitted by users and community members. Such information is provided on a best-effort basis and may not be verified. Park My Ride SG reserves the right to remove, edit, or reject submitted information at its discretion.
       </Typography>
 
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
@@ -50,7 +50,7 @@ export default function TermsPage() {
         5. Changes to These Terms
       </Typography>
       <Typography variant="body1" paragraph>
-        Park My Ride reserves the right to modify these Terms & Conditions at any time without prior notice. Continued use of the platform after changes are posted constitutes your acceptance of the revised terms.
+        Park My Ride SG reserves the right to modify these Terms & Conditions at any time without prior notice. Continued use of the platform after changes are posted constitutes your acceptance of the revised terms.
       </Typography>
 
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
