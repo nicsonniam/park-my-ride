@@ -99,6 +99,11 @@ export default function ParkingMap({
         minZoom={16}
         style={{ height: "100%", width: "100%" }}
         zoom={zoom}
+        maxBounds={[
+          [1.130475, 103.605011],
+          [1.470125, 104.0945],
+        ]}
+        maxBoundsViscosity={1.0}
       >
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"
@@ -154,7 +159,7 @@ export default function ParkingMap({
                       "Motorcycle parking available at this location."
                     ) : (
                       <>
-                        Motorcycle parking <strong>may not</strong> be available
+                        Motorcycle parking <strong>may</strong> be available
                         here.
                       </>
                     )}
