@@ -15,7 +15,10 @@ import {
   ListItemText,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
+import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/navigation";
+import { COPY } from "@/app/constants/copy";
 
 export default function TopNav() {
   const router = useRouter();
@@ -28,7 +31,7 @@ export default function TopNav() {
   ];
 
   const handleDrawerToggle = () => {
-    setDrawerOpen(!drawerOpen);
+    setDrawerOpen((prev) => !prev);
   };
 
   return (
@@ -36,23 +39,75 @@ export default function TopNav() {
       <AppBar
         color="default"
         elevation={1}
-        sx={{ backgroundColor: "white", color: "black" }}
+        sx={{
+          backgroundColor: "secondary.contrastText",
+          borderRadius: 16,
+          boxShadow: "none",
+          color: "black",
+          mx: {
+            xs: 1,
+            sm: 3,
+          },
+          my: 2,
+          width: {
+            xs: "calc(100% - 16px)",
+            sm: "calc(100% - 48px)",
+          },
+          overflow: "hidden",
+        }}
       >
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 600, cursor: "pointer" }}
+        <Toolbar
+          sx={{
+            pl: 1,
+            justifyContent: "space-between",
+          }}
+        >
+          <Box
             onClick={() => router.push("/")}
+            sx={{
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+              cursor: "pointer",
+            }}
           >
-            Park My Ride SG
-          </Typography>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                bgcolor: "secondary.main",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <TwoWheelerIcon sx={{ color: "secondary.contrastText" }} />
+            </Box>
 
-          <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+            <Typography variant="body1">{COPY.nav.appName}</Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: {
+                xs: "none",
+                md: "flex",
+              },
+            }}
+          >
             {links.map((link) => (
               <Button
                 key={link.href}
                 color="inherit"
-                sx={{ textTransform: "none", ml: 2 }}
+                sx={{
+                  ml: 2,
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                    textDecoration: "underline",
+                  },
+                }}
                 onClick={() => router.push(link.href)}
               >
                 {link.label}
@@ -63,10 +118,52 @@ export default function TopNav() {
           <IconButton
             edge="end"
             color="inherit"
-            sx={{ display: { sm: "none" } }}
             onClick={handleDrawerToggle}
+            sx={{
+              display: {
+                xs: "flex",
+                md: "none",
+              },
+              bgcolor: "background.paper",
+              borderRadius: "50%",
+              width: 40,
+              height: 40,
+              "&:hover": {
+                bgcolor: "secondary.contrastText",
+              },
+            }}
           >
-            <MenuIcon />
+            <Box
+              sx={{
+                position: "relative",
+                width: 24,
+                height: 24,
+              }}
+            >
+              <MenuIcon
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  transition: "transform 250ms ease, opacity 250ms ease",
+                  opacity: drawerOpen ? 0 : 1,
+                  transform: drawerOpen
+                    ? "rotate(-90deg) scale(0.75)"
+                    : "rotate(0deg) scale(1)",
+                }}
+              />
+
+              <CloseIcon
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  transition: "transform 250ms ease, opacity 250ms ease",
+                  opacity: drawerOpen ? 1 : 0,
+                  transform: drawerOpen
+                    ? "rotate(0deg) scale(1)"
+                    : "rotate(90deg) scale(0.75)",
+                }}
+              />
+            </Box>
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -75,7 +172,12 @@ export default function TopNav() {
         anchor="right"
         open={drawerOpen}
         onClose={handleDrawerToggle}
-        sx={{ display: { sm: "none" } }}
+        sx={{
+          display: {
+            xs: "block",
+            md: "none",
+          },
+        }}
       >
         <Box sx={{ width: 240 }} role="presentation">
           <List>

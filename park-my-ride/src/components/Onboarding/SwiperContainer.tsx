@@ -10,21 +10,21 @@ interface OnboardingSwiperProps {
 
 const welcomeSlideData = [
   {
-    title: "Welcome to Park My Ride SG 🏍️",
-    desc: "Find motorcycle parking anywhere in Singapore — fast and easy.",
+    title: "Park My Ride SG",
+    desc: "Find motorcycle parking anywhere in Singapore.",
     img: "/images/welcome_slide_motorcycle.png",
     img_alt: "Graphic of a motorcycle",
     cta: null,
   },
   {
-    title: "Smart Search 🔎",
-    desc: "Prefer typing? Search by address, keyword, or postal code for precise results.",
+    title: "Smart Search",
+    desc: "Search by address, keyword, or postal code for precise results.",
     img: "/images/welcome_slide_search.png",
     img_alt: "Graphic of a magnifying glass",
     cta: null,
   },
   {
-    title: "Live Location Access 📍",
+    title: "Live Location Access",
     desc: "Enable location to automatically detect your current area and show nearby parking spaces.",
     img: "/images/welcome_slide_location.png",
     img_alt: "Graphic of a location pin",
@@ -37,16 +37,18 @@ export default function OnboardingSwiper( { getStarted }: OnboardingSwiperProps 
     <Container
       maxWidth="sm"
       sx={{
-        minHeight: "100vh",
-        display: "flex",
         alignItems: "center",
+        backdropFilter: "blur(12px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        display: "flex",
         justifyContent: "center",
         flexDirection: "column",
+        minHeight: "100vh",
+        mt: { xs: "-96px", sm: "-96px" },
         textAlign: "center",
-        px: 2,
         paddingLeft: 0,
         paddingRight: 0,
-        mt: { xs: "-80px", sm: "-80px" },
+        px: 2,
       }}
     >
       <Container
@@ -80,19 +82,19 @@ export default function OnboardingSwiper( { getStarted }: OnboardingSwiperProps 
                 <Image
                   src={data.img}
                   alt={data.img_alt}
-                  width={200}
-                  height={200}
+                  width={120}
+                  height={120}
                 />
                 <Box
-                  sx={{ mt: 8 }}
+                  sx={{ mt: 8, textAlign: "center" }}
                 >
-                  <Typography variant="h5" gutterBottom>
+                  <Typography variant="h2" className="med" gutterBottom>
                     {data.title}
                   </Typography>
-                  <Typography variant="body2">{data.desc}</Typography>
+                  <Typography variant="h6">{data.desc}</Typography>
                   <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
                     {data.cta && (
-                      <Button variant="contained" onClick={getStarted}>
+                      <Button variant="contained" sx={{ width: "100%" }} onClick={getStarted}>
                         {data.cta ? data.cta : "Next"}
                       </Button>
                     )}
