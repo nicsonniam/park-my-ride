@@ -1,166 +1,103 @@
 "use client";
 
-import OnboardingSwiper from "@/components/Onboarding/SwiperContainer";
 import LocationSearch from "@/components/LocationSearch/LocationSearch";
-import ResultsModal from "@/components/LocationSearch/ResultsModal";
+import MessageModal from "@/components/Common/MessageModal"
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import { Container, Box, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Container, Box, Typography, Slide, Fade } from "@mui/material";
 
-import { searchOnemap, OneMapResult } from "@/lib/onemap";
+import { COPY } from "@/app/constants/copy";
+import { useUIStore } from "@/stores/uiStore";
 
 export default function Home() {
+  const setToggleSearch = useUIStore((state) => state.setToggleSearch);
+
   const [searchVal, setSearchVal] = useState("");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<OneMapResult[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState<string | null>(null);
-  const [showWelcome, setShowWelcome] = useState(false);
-  const [showLanding, setShowLanding] = useState(false);
-  const [resultsPageLength, setResultsPageLength] = useState(1);
 
   const router = useRouter();
-  const theme = useTheme();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hasCookie = document.cookie.includes("hasSeenWelcome=true");
-      setShowWelcome(!hasCookie);
-      setShowLanding(hasCookie);
-      document.cookie = "hasSeenWelcome=true; path=/; max-age=31536000";
-    } else {
-      setShowLanding(true);
-      setShowWelcome(false);
-    }
-  }, []);
-
-  const getStarted = () => {
-    setShowWelcome(false);
-    setShowLanding(true);
-  };
-
-  const logoSrc =
-    theme.palette.mode === "dark"
-      ? "/images/light-logo.png"
-      : "/images/dark-logo.png";
-
-  const handleSubmit = async (e: React.FormEvent, pageNum: number = 1) => {
-    e.preventDefault();
-    if (!searchVal.trim()) return;
-
-    setLoading(true);
-    setModalMessage(null);
-    setResults([]);
-
-    try {
-      const json = await searchOnemap(searchVal, pageNum);
-
-      if (json.results?.length > 0) {
-        setResults(json.results);
-        setResultsPageLength(json.totalNumPages || 1);
-      } else {
-        setModalMessage("No results found. Please try a different search.");
-      }
-
-      setModalOpen(true);
-    } catch (err) {
-      console.error("OneMap error:", err);
-      setModalMessage("Failed to fetch location. Please try again.");
-      setModalOpen(true);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleUseCurrentLocation = () => {
     if (!navigator.geolocation) {
-      setModalMessage("Geolocation not supported on this browser.");
+      setModalMessage(COPY.locationSearch.geolocationNotSupported);
       setModalOpen(true);
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        setToggleSearch(false);
         const { latitude, longitude } = pos.coords;
         router.push(`/results?lat=${latitude}&lon=${longitude}&address=null`);
       },
       (err) => {
         console.error("Geolocation error:", err);
-        setModalMessage("Unable to get your location.");
+        setModalMessage(COPY.locationSearch.unableToGetYourLocation);
         setModalOpen(true);
       },
     );
   };
 
-  const handleResultClick = (r: OneMapResult) => {
+  const handleSearchClick = () => {
     setModalOpen(false);
-    router.push(
-      `/results?lat=${r.LATITUDE}&lon=${r.LONGITUDE}&address=${encodeURIComponent(
-        r.ADDRESS,
-      )}`,
-    );
+    router.push("/results?search=");
   };
 
-  if (showLanding === false && showWelcome === true) {
-    return <OnboardingSwiper getStarted={getStarted} />;
-  }
-
-  if (showLanding === true && showWelcome === false) {
-    return (
+  return (
+    <>
       <Container
-        maxWidth="sm"
+        maxWidth={false}
         sx={{
-          minHeight: "100vh",
+          backgroundImage: 'url("/images/bike.png")',
+          backgroundPosition: "center",
+          backgroundSize: "cover",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
           flexDirection: "column",
-          textAlign: "center",
-          px: 2,
-          mt: { xs: "-80px", sm: "-80px" },
+          justifyContent: "space-between",
+          height: "100vh",
+          maxHeight: "calc(100vh - 100px)",
+          overflow: "hidden",
+          px: 0,
         }}
       >
-        <Box sx={{ width: "100%" }}>
-          <Box
-            component="img"
-            src={logoSrc}
-            alt="Logo"
+        <Fade in={true} timeout={800}>
+          <Typography
+            variant="h2"
             sx={{
-              display: "block",
-              margin: "0 auto 16px auto",
-              borderRadius: 2,
-              maxHeight: 160,
-              width: "auto",
+              marginTop: "32px",
+              textAlign: "left",
+              fontWeight: 500,
+              px: 2,
             }}
-          />
-
-          <Typography variant="h5" gutterBottom>
-            Find Nearby Motorcycle Parking
+          >
+            {COPY.main.title}
           </Typography>
-
-          <LocationSearch
-            searchVal={searchVal}
-            setSearchVal={setSearchVal}
-            loading={loading}
-            onSubmit={handleSubmit}
-            onUseCurrentLocation={handleUseCurrentLocation}
-          />
-        </Box>
-
-        <ResultsModal
+        </Fade>
+        <Slide direction="up" in timeout={900}>
+          <Box
+            sx={{
+              width: "100%",
+            }}
+          >
+            <LocationSearch
+              searchVal={searchVal}
+              setSearchVal={setSearchVal}
+              loading={loading}
+              handleSearchClick={handleSearchClick}
+              onUseCurrentLocation={handleUseCurrentLocation}
+            />
+          </Box>
+        </Slide>
+        <MessageModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
-          results={results}
           message={modalMessage}
-          resultsPageLength={resultsPageLength}
-          onSelect={handleResultClick}
         />
       </Container>
-    );
-  }
-
-  return null;
+    </>
+  );
 }

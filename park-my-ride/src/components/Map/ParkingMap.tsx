@@ -1,9 +1,11 @@
 "use client";
 
-import { Box } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import type { MapCarpark } from "@/types/carpark";
+import { sentenceCase } from "@/app/constants/helpers";
+import { COPY } from "@/app/constants/copy";
 
 type Props = {
   spots: MapCarpark[];
@@ -111,7 +113,11 @@ export default function ParkingMap({
         />
 
         <Marker position={center} icon={orangeIcon}>
-          <Popup>Selected Address</Popup>
+          <Popup>
+            <Typography variant="body1">
+              {COPY.general.selectedAddress}
+            </Typography>
+          </Popup>
         </Marker>
 
         {spots.map((spot) => (
@@ -120,7 +126,7 @@ export default function ParkingMap({
             position={[spot.lat, spot.lng]}
             icon={getIcon(spot)}
           >
-            <Popup>
+            <Popup className="map-popup">
               <div
                 style={{
                   textAlign: "center",
@@ -129,9 +135,9 @@ export default function ParkingMap({
                   lineHeight: "1.4",
                 }}
               >
-                <strong>
+                <Typography variant="body1" className="med" sx={{ m: 0 }}>
                   {spot.source} - {spot.location}
-                </strong>
+                </Typography>
 
                 {spot.rates && (
                   <>
@@ -146,22 +152,26 @@ export default function ParkingMap({
                 )}
 
                 {spot.parking_system && (
-                  <>
-                    <br />
-                    System: {spot.parking_system}
-                  </>
+                  <Typography variant="body2">
+                    {COPY.carparks.general.system}
+                    {sentenceCase(spot.parking_system)}
+                  </Typography>
                 )}
 
                 {spot.vehCat && (
                   <>
-                    <br />
                     {spot.vehCat === "Motorcycle" ? (
-                      "Motorcycle parking available at this location."
+                      <Typography variant="body2">
+                        {COPY.carparks.rates.parkingAvailable}
+                      </Typography>
                     ) : (
-                      <>
-                        Motorcycle parking <strong>may</strong> be available
-                        here.
-                      </>
+                      <Typography variant="body2">
+                        {COPY.carparks.rates.parkingMayBeAvailable.before}{" "}
+                        <strong>
+                          {COPY.carparks.rates.parkingMayBeAvailable.emphasis}
+                        </strong>{" "}
+                        {COPY.carparks.rates.parkingMayBeAvailable.after}
+                      </Typography>
                     )}
                   </>
                 )}
@@ -169,21 +179,18 @@ export default function ParkingMap({
                 <br />
 
                 {openNavigation && (
-                  <button
-                    style={{
-                      marginTop: "10px",
-                      padding: "6px 10px",
-                      cursor: "pointer",
-                      background: "#1976d2",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      width: "100%",
+                  <Button
+                    sx={{
+                      bgcolor: "primary.main",
+                      color: "primary.contrastText",
+                      p: 2,
+                      height: "40px",
+                      fontSize: 14,
                     }}
                     onClick={() => openNavigation(spot)}
                   >
-                    Open in Maps
-                  </button>
+                    {COPY.general.openInMaps}
+                  </Button>
                 )}
               </div>
             </Popup>
