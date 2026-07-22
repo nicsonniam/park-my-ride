@@ -1,20 +1,26 @@
 // app/results/page.tsx
-"use client"
+"use client";
 
 import { Suspense } from "react";
-import ResultsPage from "./ResultsPage";
+import SearchResultsPage from "./SearchResultsPage";
 import { Box, CircularProgress } from "@mui/material";
 
 export default function ResultsPageWrapper() {
   return (
     <Suspense
       fallback={
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 4,
+          }}
+        >
           <CircularProgress />
         </Box>
       }
     >
-      <ResultsPage />
+      <SearchResultsPage />
     </Suspense>
   );
 }
