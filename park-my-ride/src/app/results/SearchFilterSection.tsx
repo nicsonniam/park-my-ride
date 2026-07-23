@@ -98,14 +98,6 @@ export default function SearchFilterSection({
     }, 300);
   };
 
-  const handleBlur = () => {
-    setTimeout(() => {
-      if (resultsLength > 0) {
-        setToggleSearch(false);
-      }
-    }, 150);
-  };
-
   useEffect(() => {
     return () => {
       if (debounceTimer.current) {
@@ -183,7 +175,6 @@ export default function SearchFilterSection({
                 fullWidth
                 value={searchVal}
                 onFocus={() => setToggleSearch(true)}
-                onBlur={handleBlur}
                 onChange={(e) => handleSearch(e.target.value)}
                 sx={{
                   backgroundColor: "secondary.contrastText",
