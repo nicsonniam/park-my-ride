@@ -21,9 +21,11 @@ type RecentLocationsProps = {
   results: OneMapResult[];
   queryLength: number;
   handleResultClick: (r: OneMapResult) => void;
+  clearRecent: () => void;
 };
 
 export default function LocationSearch({
+  clearRecent,
   recentLocations,
   results,
   queryLength,
@@ -41,7 +43,11 @@ export default function LocationSearch({
     >
       {queryLength <= 3 && queryLength > 0 && (
         <>
-          <Typography variant="h6" sx={{ mt: 4 }}>
+          <Typography
+            variant="body1"
+            sx={{ textAlign: "center" }}
+            className="med"
+          >
             {COPY.general.tooManyResults}
           </Typography>
         </>
@@ -95,7 +101,12 @@ export default function LocationSearch({
       {(results === null || results.length === 0) && queryLength === 0 && (
         <>
           {recentLocations.length > 0 && (
-            <Typography variant="body2">{COPY.general.recent}</Typography>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2">{COPY.general.recent}</Typography>
+              <Box onClick={clearRecent}>
+                <Typography variant="body2">{COPY.general.clear}</Typography>
+              </Box>
+            </Stack>
           )}
           <Stack direction="column">
             {recentLocations

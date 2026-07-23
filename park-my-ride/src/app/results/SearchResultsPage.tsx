@@ -125,21 +125,31 @@ export default function SearchResultsPage() {
     notFound();
   }
 
+  const clearRecent = () => {
+    localStorage.removeItem("recentLocations");
+    setRecentLocations([]);
+  };
+
   const handleResultClick = (r: OneMapResult) => {
     setToggleSearch(false);
     setLoading(true);
-    const key = "recentLocations";
-    const recent = JSON.parse(localStorage.getItem(key) ?? "[]");
 
-    const filtered = recent.filter(
-      (item: typeof r) =>
-        item.LATITUDE !== r.LATITUDE || item.LONGITUDE !== r.LONGITUDE,
+    const key = "recentLocations";
+    const recent: OneMapResult[] = JSON.parse(
+      localStorage.getItem(key) ?? "[]",
     );
 
-    filtered.unshift(r);
+    const filtered = recent.filter(
+      (item) => item.LATITUDE !== r.LATITUDE || item.LONGITUDE !== r.LONGITUDE,
+    );
 
-    localStorage.setItem(key, JSON.stringify(filtered.slice(0, 15)));
+    const updatedRecent = [r, ...filtered].slice(0, 15);
+
+    localStorage.setItem(key, JSON.stringify(updatedRecent));
+    setRecentLocations(updatedRecent);
+
     setModalOpen(false);
+
     router.push(
       `/results?lat=${r.LATITUDE}&lon=${r.LONGITUDE}&address=${encodeURIComponent(
         r.ADDRESS,
@@ -187,7 +197,8 @@ export default function SearchResultsPage() {
     setSearchVal("");
     setResults([]);
     setResultsLength(0);
-  }
+    setQueryLength(0);
+  };
 
   return (
     <Container maxWidth="md" sx={{ mt: 1, mb: 10 }}>
@@ -210,6 +221,7 @@ export default function SearchResultsPage() {
       />
       {toggleSearch && (
         <LocationSearch
+          clearRecent={clearRecent}
           recentLocations={recentLocations}
           results={results}
           queryLength={queryLength}
