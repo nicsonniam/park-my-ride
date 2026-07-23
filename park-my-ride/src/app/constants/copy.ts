@@ -9,6 +9,7 @@ export const COPY = {
   },
 
   general: {
+    clear: "Clear",
     results: "Results",
     map: "Map",
     tapAndHold: "Tap & hold",

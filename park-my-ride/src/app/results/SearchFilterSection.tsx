@@ -45,6 +45,7 @@ const distRadiusOptions = [100, 200, 300, 500, 700, 1000];
 
 export default function SearchFilterSection({
   clearSearch,
+  setQueryLength,
   lat,
   lon,
   collapsed,
@@ -52,7 +53,6 @@ export default function SearchFilterSection({
   searchVal,
   setSearchVal,
   setResults,
-  setQueryLength,
   radius,
   setRadius,
   handleUseCurrentLocation,
@@ -192,7 +192,10 @@ export default function SearchFilterSection({
               />
               {searchVal.length > 3 && clearSearch && (
                 <Box
-                  onClick={() => clearSearch()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearSearch();
+                  }}
                   sx={{
                     p: 0.5,
                     display: "flex",

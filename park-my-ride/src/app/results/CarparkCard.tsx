@@ -81,7 +81,7 @@ export default function CarparkCard({
                 variant="h6"
                 className="med"
                 sx={{
-                  maxWidth: { sm: 250, md: "unset" },
+                  maxWidth: { xs: 250, sm: "unset" },
                   cursor: type === "Private" ? "pointer" : "default",
                 }}
                 noWrap
@@ -103,7 +103,7 @@ export default function CarparkCard({
               >
                 <Typography
                   variant="h6"
-                  sx={{ cursor: "pointer", maxWidth: { sm: 270, md: "unset" } }}
+                  sx={{ cursor: "pointer", maxWidth: { xs: 270, sm: "unset" } }}
                   noWrap
                 >
                   {subtitle}
