@@ -201,7 +201,7 @@ export default function SearchResultsPage() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 1, pb: 6 }}>
+    <Container maxWidth="sm" sx={{ mt: 1, pb: 6 }}>
       <SearchFilterSection
         clearSearch={clearSearch}
         lat={Number(lat)}

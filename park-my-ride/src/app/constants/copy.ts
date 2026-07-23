@@ -9,6 +9,8 @@ export const COPY = {
   },
 
   general: {
+    available: "Available",
+    unknownAvailability: "Unknown availability",
     clear: "Clear",
     results: "Results",
     map: "Map",

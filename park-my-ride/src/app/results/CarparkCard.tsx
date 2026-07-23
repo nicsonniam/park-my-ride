@@ -13,7 +13,7 @@ import {
 
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import HelpIcon from "@mui/icons-material/Help";
+import ErrorIcon from '@mui/icons-material/Error';
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import BlockIcon from "@mui/icons-material/Block";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -81,8 +81,9 @@ export default function CarparkCard({
                 variant="h6"
                 className="med"
                 sx={{
+                  textTransform: "uppercase",
                   maxWidth: { xs: 250, sm: "unset" },
-                  cursor: type === "Private" ? "pointer" : "default",
+                  cursor: isMobile ? "pointer" : "default",
                 }}
                 noWrap
               >
@@ -103,14 +104,19 @@ export default function CarparkCard({
               >
                 <Typography
                   variant="h6"
-                  sx={{ cursor: "pointer", maxWidth: { xs: 270, sm: "unset" } }}
+                  sx={{
+                    textTransform: "uppercase",
+                    fontSize: "0.9rem",
+                    maxWidth: { xs: 270, sm: "unset" },
+                    cursor: isMobile? "pointer" : "default",
+                  }}
                   noWrap
                 >
                   {subtitle}
                 </Typography>
               </Tooltip>
 
-              {type === "Private" && (
+              {/* {type === "Private" && (
                 <Tooltip title={cp.verified ? "Verified" : "Not Verified"}>
                   <CheckCircleIcon
                     fontSize="small"
@@ -119,7 +125,7 @@ export default function CarparkCard({
                     }}
                   />
                 </Tooltip>
-              )}
+              )} */}
             </Box>
           </Box>
 
@@ -158,7 +164,8 @@ export default function CarparkCard({
                 display: "flex",
                 alignItems: "center",
                 gap: "4px",
-                minWidth: 140,
+                minWidth: isMobile ? 160 : 300,
+                maxWidth: isMobile ? 160 : "unset",
               }}
               noWrap
             >
@@ -176,10 +183,14 @@ export default function CarparkCard({
             <Typography
               variant="body2"
               sx={{
+                cursor: "default",
                 display: "flex",
                 alignItems: "center",
                 gap: 0.5,
-                minWidth: 140,
+                lineHeight: 1,
+                minWidth: isMobile ? 160 : 300,
+                maxWidth: isMobile ? 160 : "unset",
+                textWrap: "wrap",
               }}
               noWrap
             >
@@ -192,7 +203,7 @@ export default function CarparkCard({
                   }}
                 />
               ) : (
-                <HelpIcon
+                <ErrorIcon
                   sx={{
                     height: 16,
                     width: 16,
@@ -202,8 +213,12 @@ export default function CarparkCard({
               )}
 
               {cp.vehCat === "Motorcycle"
-                ? "Available"
-                : "Unknown availability"}
+                ? isMobile
+                  ? "M'cycles may park here"
+                  : "Motorcycles may park here"
+                : isMobile
+                  ? "M'cycles may not be able to park here"
+                  : "Motorcycles may not be able to park here"}
             </Typography>
           )}
 
@@ -220,7 +235,8 @@ export default function CarparkCard({
                   display: "flex",
                   alignItems: "center",
                   gap: 0.5,
-                  minWidth: 140,
+                  minWidth: isMobile ? 160 : 300,
+                  maxWidth: isMobile ? 160 : "unset",
                 }}
                 noWrap
               >

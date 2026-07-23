@@ -5,6 +5,7 @@ import "./globals.css";
 import { Box } from "@mui/material";
 
 import TopNav from "@/components/Common/TopNav";
+import BackToTopButton from "@/components/Common/BackToTopButton";
 
 import Providers from "./providers";
 import { clash } from "./fonts";
@@ -32,6 +33,7 @@ export default function RootLayout({
           <TopNav />
           <Box sx={{ pt: 12 }}>
             {children}
+            <BackToTopButton />
           </Box>
         </Providers>
       </body>
