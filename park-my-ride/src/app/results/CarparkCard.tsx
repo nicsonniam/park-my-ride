@@ -81,6 +81,7 @@ export default function CarparkCard({
                 variant="h6"
                 className="med"
                 sx={{
+                  textTransform: "uppercase",
                   maxWidth: { xs: 250, sm: "unset" },
                   cursor: type === "Private" ? "pointer" : "default",
                 }}
@@ -103,14 +104,19 @@ export default function CarparkCard({
               >
                 <Typography
                   variant="h6"
-                  sx={{ cursor: "pointer", maxWidth: { xs: 270, sm: "unset" } }}
+                  sx={{
+                    textTransform: "uppercase",
+                    fontSize: "0.9rem",
+                    maxWidth: { xs: 280, sm: "unset" },
+                    cursor: "pointer",
+                  }}
                   noWrap
                 >
                   {subtitle}
                 </Typography>
               </Tooltip>
 
-              {type === "Private" && (
+              {/* {type === "Private" && (
                 <Tooltip title={cp.verified ? "Verified" : "Not Verified"}>
                   <CheckCircleIcon
                     fontSize="small"
@@ -119,7 +125,7 @@ export default function CarparkCard({
                     }}
                   />
                 </Tooltip>
-              )}
+              )} */}
             </Box>
           </Box>
 

@@ -152,7 +152,7 @@ const theme = createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           borderRadius: 999,
-          color: theme.palette.text.secondary,
+          color: theme.palette.primary.contrastText,
           fontSize: "16px",
           minHeight: 40,
           minWidth: "25%",

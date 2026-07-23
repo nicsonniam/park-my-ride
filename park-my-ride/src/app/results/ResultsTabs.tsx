@@ -80,9 +80,18 @@ export default function ResultsTabs({
     <>
       <Tabs value={tab} onChange={(_, value) => setTab(value)}>
         <Tab label={COPY.carparks.types.all} />
-        <Tab label={COPY.carparks.types.hdb} />
-        <Tab label={COPY.carparks.types.ura} />
-        <Tab label={COPY.carparks.types.other} />
+        <Tab
+          label={COPY.carparks.types.hdb}
+          disabled={hdbCarparks.length === 0}
+        />
+        <Tab
+          label={COPY.carparks.types.ura}
+          disabled={uraCarparks.length === 0}
+        />
+        <Tab
+          label={COPY.carparks.types.other}
+          disabled={privateCarparks.length === 0}
+        />
       </Tabs>
 
       <Box sx={{ mt: 1 }}>
