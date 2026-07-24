@@ -12,8 +12,6 @@ import {
 } from "@mui/material";
 
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from '@mui/icons-material/Error';
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import BlockIcon from "@mui/icons-material/Block";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -108,7 +106,7 @@ export default function CarparkCard({
                     textTransform: "uppercase",
                     fontSize: "0.9rem",
                     maxWidth: { xs: 270, sm: "unset" },
-                    cursor: isMobile? "pointer" : "default",
+                    cursor: isMobile ? "pointer" : "default",
                   }}
                   noWrap
                 >
@@ -175,7 +173,9 @@ export default function CarparkCard({
                   width: 16,
                 }}
               />
-              {sentenceCase(cp.car_park_type.replace(/car park/i, ""))}
+              {isMobile
+                ? sentenceCase(cp.car_park_type.replace(/car park/i, ""))
+                : cp.car_park_type}
             </Typography>
           )}
 
@@ -194,31 +194,24 @@ export default function CarparkCard({
               }}
               noWrap
             >
-              {cp.vehCat === "Motorcycle" ? (
-                <CheckCircleIcon
-                  sx={{
-                    height: 16,
-                    width: 16,
-                    color: "success.main",
-                  }}
-                />
-              ) : (
-                <ErrorIcon
-                  sx={{
-                    height: 16,
-                    width: 16,
-                    color: "warning.main",
-                  }}
-                />
-              )}
+              <LocalParkingIcon
+                sx={{
+                  height: 16,
+                  width: 16,
+                }}
+              />
 
-              {cp.vehCat === "Motorcycle"
+              {cp.parkingSystem === "C"
                 ? isMobile
-                  ? "M'cycles may park here"
-                  : "Motorcycles may park here"
+                  ? sentenceCase(
+                      COPY.carparks.general.coupon.replace(/car park/i, ""),
+                    )
+                  : COPY.carparks.general.coupon
                 : isMobile
-                  ? "M'cycles may not be able to park here"
-                  : "Motorcycles may not be able to park here"}
+                  ? sentenceCase(
+                      COPY.carparks.general.electronic.replace(/car park/i, ""),
+                    )
+                  : COPY.carparks.general.electronic}
             </Typography>
           )}
 

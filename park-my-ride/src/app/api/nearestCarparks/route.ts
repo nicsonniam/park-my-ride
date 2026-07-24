@@ -79,7 +79,7 @@ export async function POST(req: Request) {
           },
           {
             $match: {
-              vehCat: { $ne: "Heavy Vehicle" },
+              vehCat: "Motorcycle",
               parkCapacity: { $gt: 0 },
             },
           },

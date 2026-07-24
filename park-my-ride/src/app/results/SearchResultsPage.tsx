@@ -292,14 +292,14 @@ export default function SearchResultsPage() {
         ))}
 
       <Drawer
-        anchor="bottom"
+        anchor={isMobile ? "bottom" : "left"}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         slotProps={{
           paper: {
             sx: {
-              borderTopLeftRadius: 16,
-              borderTopRightRadius: 16,
+              borderTopLeftRadius: isMobile ? 16 : 0,
+              borderTopRightRadius: isMobile ? 16 : 0,
               p: 2,
               pb: 8,
             },
@@ -307,7 +307,11 @@ export default function SearchResultsPage() {
         }}
       >
         {selectedCarpark && (
-          <NavigationButtons selectedCarpark={selectedCarpark} />
+          <NavigationButtons
+            isMobile={isMobile}
+            setDrawerOpen={setDrawerOpen}
+            selectedCarpark={selectedCarpark}
+          />
         )}
       </Drawer>
 

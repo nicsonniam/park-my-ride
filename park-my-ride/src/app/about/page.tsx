@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <Container sx={{ mt: 4, mb: 8 }}>
+    <Container sx={{ mt: 4, pb: 8 }}>
       <Typography variant="h4" sx={{ mb: 2 }}>
         Welcome to Park My Ride SG
       </Typography>

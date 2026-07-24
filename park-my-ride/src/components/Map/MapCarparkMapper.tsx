@@ -1,5 +1,6 @@
 "use client";
 
+import { COPY } from "@/app/constants/copy";
 import type { HDBCarpark, URACarpark, PrivateCarpark } from "@/types/carpark";
 import type { MapCarpark } from "@/types/carpark";
 
@@ -29,7 +30,7 @@ export function mapCarparks(
       location: cp.ppName,
       rates: null,
       isNoParking: null,
-      parking_system: null,
+      parking_system: cp.parkingSystem ? cp.parkingSystem === 'C' ? COPY.carparks.general.coupon : COPY.carparks.general.electronic : null,
       car_park_type: null,
       vehCat: cp.vehCat,
       source: "URA" as const,
@@ -39,7 +40,7 @@ export function mapCarparks(
       id: cp._id,
       lat: cp.latitude ?? 0,
       lng: cp.longitude ?? 0,
-      location: cp.location_name ?? cp.address ?? "Unknown",
+      location: cp.location_name ?? cp.address ?? COPY.carparks.rates.unknown,
       rates: cp.rates ?? null,
       isNoParking: cp.isNoParking,
       parking_system: null,

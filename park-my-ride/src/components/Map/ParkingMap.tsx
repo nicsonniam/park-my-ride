@@ -71,6 +71,7 @@ export default function ParkingMap({
   openNavigation,
 }: Props) {
   const getIcon = (spot: MapCarpark) => {
+    console.log(spot);
     if (spot.isNoParking) {
       return redIcon;
     }
@@ -151,29 +152,10 @@ export default function ParkingMap({
                   </>
                 )}
 
-                {spot.parking_system && (
+                {(spot.parking_system) && (
                   <Typography variant="body2">
-                    {COPY.carparks.general.system}
                     {sentenceCase(spot.parking_system)}
                   </Typography>
-                )}
-
-                {spot.vehCat && (
-                  <>
-                    {spot.vehCat === "Motorcycle" ? (
-                      <Typography variant="body2">
-                        {COPY.carparks.rates.parkingAvailable}
-                      </Typography>
-                    ) : (
-                      <Typography variant="body2">
-                        {COPY.carparks.rates.parkingMayBeAvailable.before}{" "}
-                        <strong>
-                          {COPY.carparks.rates.parkingMayBeAvailable.emphasis}
-                        </strong>{" "}
-                        {COPY.carparks.rates.parkingMayBeAvailable.after}
-                      </Typography>
-                    )}
-                  </>
                 )}
 
                 <br />

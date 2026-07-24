@@ -15,6 +15,7 @@ export interface URACarpark {
   ppName: string;
   vehCat: string;
   parkCapacity: number;
+  parkingSystem?: string;
   distance: number;
   lat: number;
   lng: number;
