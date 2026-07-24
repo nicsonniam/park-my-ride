@@ -1,5 +1,3 @@
-// constants/copy.ts
-
 export const COPY = {
   nav: {
     home: "Home",
@@ -19,6 +17,7 @@ export const COPY = {
     distAway: "m away",
     tooManyResults: "Too many results, please refine your search",
     noLocationsFound: "No locations found",
+    noLocationsFoundSubtext: "Try a building name, address or postal code",
     recent: "Recent",
     moreFromRecentHistory: "More from recent history",
     navigatingTo: "Navigating to:",
@@ -58,18 +57,14 @@ export const COPY = {
   carparks: {
     general: {
       system: "System: ",
+      coupon: "Coupon parking",
+      electronic: "Electronic parking",
     },
     rates: {
       freeParking: "Free parking",
       noParking: "No parking",
       forRates: " for rates",
       unknown: "Unknown",
-      parkingAvailable: "Motorcycle parking available at this location.",
-      parkingMayBeAvailable: {
-        before: "Motorcycle parking ",
-        emphasis: "may",
-        after: " be available here.",
-      },
     },
     noParking: {
       noParkingFound: "No parking found",

@@ -7,6 +7,8 @@ const HDB_DB_NAME = "hdbCarparkData";
 const URA_DB_NAME = "uraCarparkData";
 const PRIVATE_DB_NAME = "privateCarparkData";
 
+const uraNotListed = ["C0151"];
+
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : [];
@@ -79,8 +81,11 @@ export async function POST(req: Request) {
           },
           {
             $match: {
-              vehCat: { $ne: "Heavy Vehicle" },
               parkCapacity: { $gt: 0 },
+              $or: [
+                { vehCat: "Motorcycle" },
+                { ppCode: { $in: uraNotListed } },
+              ],
             },
           },
           { $limit: 50 },

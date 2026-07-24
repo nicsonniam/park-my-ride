@@ -1,7 +1,10 @@
 "use client";
 
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { COPY } from "../constants/copy";
+
+import CloseIcon from "@mui/icons-material/Close";
+import { Dispatch, SetStateAction } from "react";
 
 type Coordinates = {
   latitude?: number;
@@ -22,10 +25,14 @@ type Coordinates = {
 
 type Props = {
   selectedCarpark: Coordinates;
+  isMobile: boolean;
+  setDrawerOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function NavigationButtons({
   selectedCarpark,
+  isMobile,
+  setDrawerOpen,
 }: Props) {
   const getCoordinates = () => {
     if (selectedCarpark.latitude && selectedCarpark.longitude) {
@@ -79,7 +86,13 @@ export default function NavigationButtons({
   };
 
   return (
-    <>
+    <Stack sx={{ position: "relative", width: isMobile ? "unset" : 400 }}>
+      <Box
+        onClick={() => setDrawerOpen(false)}
+        sx={{ cursor: "pointer", position: "absolute", top: 0, right: 0 }}
+      >
+        <CloseIcon />
+      </Box>
       <Typography className="med" variant="h6" gutterBottom>
         {COPY.general.navigatingTo}
       </Typography>
@@ -96,23 +109,15 @@ export default function NavigationButtons({
           selectedCarpark.ppName}
       </Typography>
 
-      <div className="flex gap-8 mt-8">
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={openGoogleMaps}
-        >
+      <Stack sx={{ pt: 2 }} flexDirection={isMobile ? "row" : "column"} gap={2}>
+        <Button variant="contained" fullWidth onClick={openGoogleMaps}>
           {COPY.general.googleMaps}
         </Button>
 
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={openWaze}
-        >
+        <Button variant="contained" fullWidth onClick={openWaze}>
           {COPY.general.waze}
         </Button>
-      </div>
-    </>
+      </Stack>
+    </Stack>
   );
 }

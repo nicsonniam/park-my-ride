@@ -109,7 +109,7 @@ export default function ParkingMap({
       >
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
 
         <Marker position={center} icon={orangeIcon}>
@@ -151,29 +151,10 @@ export default function ParkingMap({
                   </>
                 )}
 
-                {spot.parking_system && (
+                {(spot.parking_system) && (
                   <Typography variant="body2">
-                    {COPY.carparks.general.system}
                     {sentenceCase(spot.parking_system)}
                   </Typography>
-                )}
-
-                {spot.vehCat && (
-                  <>
-                    {spot.vehCat === "Motorcycle" ? (
-                      <Typography variant="body2">
-                        {COPY.carparks.rates.parkingAvailable}
-                      </Typography>
-                    ) : (
-                      <Typography variant="body2">
-                        {COPY.carparks.rates.parkingMayBeAvailable.before}{" "}
-                        <strong>
-                          {COPY.carparks.rates.parkingMayBeAvailable.emphasis}
-                        </strong>{" "}
-                        {COPY.carparks.rates.parkingMayBeAvailable.after}
-                      </Typography>
-                    )}
-                  </>
                 )}
 
                 <br />

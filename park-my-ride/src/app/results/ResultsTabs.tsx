@@ -114,10 +114,7 @@ export default function ResultsTabs({
               </Box>
             ) : (
               <>
-                {toggleMap &&
-                (hdbCarparks.length > 0 ||
-                  uraCarparks.length > 0 ||
-                  privateCarparks.length > 0) ? (
+                {toggleMap ? (
                   <ParkingMapWrapper
                     spots={mapCarparkList("All")}
                     center={[lat, lon]}
@@ -137,7 +134,7 @@ export default function ResultsTabs({
         )}
 
         {tab === 1 &&
-          (toggleMap && hdbCarparks.length > 0 ? (
+          (toggleMap ? (
             <ParkingMapWrapper
               spots={mapCarparkList("HDB")}
               center={[lat, lon]}
@@ -156,7 +153,7 @@ export default function ResultsTabs({
           ))}
 
         {tab === 2 &&
-          (toggleMap && uraCarparks.length > 0 ? (
+          (toggleMap ? (
             <ParkingMapWrapper
               spots={mapCarparkList("URA")}
               center={[lat, lon]}
@@ -175,7 +172,7 @@ export default function ResultsTabs({
           ))}
 
         {tab === 3 &&
-          (toggleMap && privateCarparks.length > 0 ? (
+          (toggleMap ? (
             <ParkingMapWrapper
               spots={mapCarparkList("Private")}
               center={[lat, lon]}

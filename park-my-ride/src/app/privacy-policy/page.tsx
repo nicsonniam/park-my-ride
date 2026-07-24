@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <Container sx={{ mt: 4, mb: 8 }}>
+    <Container sx={{ mt: 4, pb: 8 }}>
       <Typography variant="h2" sx={{ mb: 2 }}>
         Privacy Policy
       </Typography>

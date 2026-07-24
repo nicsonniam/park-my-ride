@@ -94,6 +94,12 @@ export default function LocationSearch({
             >
               {COPY.general.noLocationsFound}
             </Typography>
+            <Typography
+              variant="body1"
+              sx={{ textAlign: "center" }}
+            >
+              {COPY.general.noLocationsFoundSubtext}
+            </Typography>
           </Stack>
         </>
       )}
