@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useState } from "react";
+import Collapse from "@mui/material/Collapse";
+
 import {
   Card,
   CardContent,
@@ -11,12 +14,15 @@ import {
   Button,
 } from "@mui/material";
 
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import BlockIcon from "@mui/icons-material/Block";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { COPY } from "../constants/copy";
 
 type ParkingType = "HDB" | "URA" | "Private";
@@ -50,6 +56,8 @@ export default function CarparkCard({
       },
     },
   };
+
+  const [showRates, setShowRates] = useState(false);
 
   const title =
     type === "HDB"
@@ -153,7 +161,7 @@ export default function CarparkCard({
           direction="row"
           alignItems="center"
           spacing={1}
-          gap="24px"
+          gap="5px"
         >
           {type === "HDB" && (
             <Typography
@@ -212,57 +220,93 @@ export default function CarparkCard({
           )}
 
           {type === "Private" && (
-            <Tooltip
-              title={cp.rates}
-              {...tooltipProps}
-              leaveDelay={isMobile ? 10000 : 0}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                minWidth: isMobile ? 160 : 300,
+                maxWidth: isMobile ? 160 : "unset",
+              }}
             >
-              <Typography
-                variant="body2"
-                sx={{
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                  minWidth: isMobile ? 160 : 300,
-                  maxWidth: isMobile ? 160 : "unset",
-                }}
-                noWrap
-              >
-                {cp.rates === "Free Parking" ? (
+              {cp.rates === "Free Parking" ? (
+                <>
                   <MoneyOffIcon
                     sx={{
-                      height: 16,
                       width: 16,
+                      height: 16,
                       color: "success.main",
                     }}
                   />
-                ) : cp.rates === "No Motorcycle Parking" ? (
+                  <Typography variant="body2">
+                    {COPY.carparks.rates.freeParking}
+                  </Typography>
+                </>
+              ) : cp.rates === "No Motorcycle Parking" ? (
+                <>
                   <BlockIcon
                     sx={{
-                      height: 16,
                       width: 16,
+                      height: 16,
                       color: "error.main",
                     }}
                   />
-                ) : (
+                  <Typography variant="body2">
+                    {COPY.carparks.rates.noParking}
+                  </Typography>
+                </>
+              ) : (
+                <>
                   <AttachMoneyIcon
                     sx={{
-                      height: 16,
                       width: 16,
+                      height: 16,
                     }}
                   />
-                )}
 
-                {cp.rates === "Free Parking"
-                  ? COPY.carparks.rates.freeParking
-                  : cp.rates === "No Motorcycle Parking"
-                    ? COPY.carparks.rates.noParking
-                    : `${isMobile ? COPY.general.tapAndHold : COPY.general.hover} ${COPY.carparks.rates.forRates}`}
-              </Typography>
-            </Tooltip>
+                  <Button
+                    variant="text"
+                    size="small"
+                    disableRipple
+                    onClick={() => setShowRates((prev) => !prev)}
+                    endIcon={
+                      <ExpandMoreIcon
+                        sx={{
+                          transition: "transform 0.25s ease",
+                          transform: showRates
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        }}
+                      />
+                    }
+                    sx={{
+                      fontSize: "0.875rem",
+                      color: "primary.contrastText",
+                      height: "fit-content",
+                      width: {
+                        xs: 130,
+                        sm: 140,
+                      },
+                      minWidth: 0,
+                      p: 0,
+                      textTransform: "none",
+                      justifyContent: "space-between",
+
+                      "& .MuiButton-endIcon": {
+                        marginLeft: 0,
+                      },
+                    }}
+                  >
+                    {`${isMobile ? COPY.general.tapTo : COPY.general.clickTo} ${
+                      showRates
+                        ? COPY.general.hideRates
+                        : COPY.general.showRates
+                    }`}
+                  </Button>
+                </>
+              )}
+            </Box>
           )}
-
           <Typography
             variant="body2"
             sx={{
@@ -282,6 +326,36 @@ export default function CarparkCard({
             {COPY.general.distAway}
           </Typography>
         </Stack>
+        {type === "Private" &&
+          cp.rates !== "Free Parking" &&
+          cp.rates !== "No Motorcycle Parking" && (
+            <Collapse in={showRates}>
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  backgroundColor: "grey.100",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    whiteSpace: "pre-line",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {cp.rates.replace(/\\n/g, "\n")}
+                  <br></br>
+                  <br></br>
+                  {COPY.carparks.general.gracePeriod}
+                  {Number(cp.grace_period) === 0
+                    ? "No grace period"
+                    : cp.grace_period + COPY.carparks.general.minutes}
+                </Typography>
+              </Box>
+            </Collapse>
+          )}
       </CardContent>
     </Card>
   );

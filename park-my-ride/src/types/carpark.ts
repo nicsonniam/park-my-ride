@@ -31,6 +31,7 @@ export interface PrivateCarpark {
   verified: boolean;
   latitude: number;
   longitude: number;
+  grace_period?: unknown;
 }
 
 export type MapCarpark = {

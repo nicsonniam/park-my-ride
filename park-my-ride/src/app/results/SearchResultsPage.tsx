@@ -90,6 +90,7 @@ export default function SearchResultsPage() {
             verified: cp.verified ?? false,
             latitude: cp.latitude,
             longitude: cp.longitude,
+            grace_period: cp.grace_period ?? null,
           }))
           .sort((a, b) => Number(a.isNoParking) - Number(b.isNoParking)),
       );
